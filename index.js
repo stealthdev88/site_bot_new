@@ -31,12 +31,30 @@ const proxies = [
   "92.112.217.127:5899:pxondxdk:ejvh9yofnsme",
 ];
 
-// // Proxy server details
-// const PROXY_SERVER = '';
-// const PROXY_USERNAME = '12341234';
-// const PROXY_PASSWORD = 'Upwork123';
 
+const SLACK_APP_TOKEN =
+  process.env.SLACK_APP_TOKEN ||
+  "";
+const SLACK_CHANNEL_ID = "D07KUM5HRM5";
 
+const web = new WebClient(SLACK_APP_TOKEN);
+
+/**
+ * Function for sending notification to the slack channel
+ * @param {string} message
+ */
+
+async function sendSlackMessage(message) {
+  try {
+    // Post a message to the channel
+    await web.chat.postMessage({
+      channel: SLACK_CHANNEL_ID,
+      text: message,
+    });
+  } catch (error) {
+    console.log("send message error!");
+  }
+}
 
 const nameArray = {
   Poland: [
@@ -230,6 +248,7 @@ const checkConnect = async (page, emailAddress) => {
     ) {
       const date = formatDateTime();
       const logEntry = `${date} ${emailAddress}\n`;
+      sendSlackMessage(emailAddress);
       try {
         await fs.access(FILENAME);
       } catch (err) {
