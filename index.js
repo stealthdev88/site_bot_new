@@ -35,7 +35,8 @@ const proxies = [
 const SLACK_APP_TOKEN =
   process.env.SLACK_APP_TOKEN ||
   "";
-const SLACK_CHANNEL_ID = "D07KUM5HRM5";
+const SLACK_CHANNEL_ID = "C07NTMV7L84";
+const USERNAME = "upwork_bot";
 
 const web = new WebClient(SLACK_APP_TOKEN);
 
@@ -50,6 +51,7 @@ async function sendSlackMessage(message) {
     await web.chat.postMessage({
       channel: SLACK_CHANNEL_ID,
       text: message,
+      username: USERNAME
     });
   } catch (error) {
     console.log("send message error!");
