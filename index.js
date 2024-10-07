@@ -1,18 +1,10 @@
-const fs = require("fs/promises");
 const { faker } = require("@faker-js/faker");
 const pt = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const UserAgent = require("user-agents");
-const { WebClient } = require("@slack/web-api");
-// const chalk = require("chalk");
-let chalk;
-
-(async () => {
-  chalk = (await import("chalk")).default;
-})();
+const chalk = require("chalk");
 
 pt.use(StealthPlugin());
-
 const AdblockerPlugin = require("puppeteer-extra-plugin-adblocker");
 pt.use(
   AdblockerPlugin({
@@ -20,116 +12,374 @@ pt.use(
   })
 );
 
-const PASSWORD = "kimju1992103";
-const FILENAME = "accounts.txt";
+const { WebClient } = require("@slack/web-api");
 
-const proxies = [
-  "161.123.208.37:6281:pxondxdk:ejvh9yofnsme",
-  "161.123.215.157:6768:pxondxdk:ejvh9yofnsme",
-  "23.94.138.30:6304:pxondxdk:ejvh9yofnsme",
-  "104.249.31.105:6189:pxondxdk:ejvh9yofnsme",
-  "92.112.217.127:5899:pxondxdk:ejvh9yofnsme",
+// Your Slack bot token
+const token = "";
+const channel1 = "C07NTMV7L84";
+const slackClient = new WebClient(token);
+
+const country = [
+  "Albania",
+  "Algeria",
+  "American Samoa",
+  "Andorra",
+  "Angola",
+  "Anguilla",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Aruba",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bermuda",
+  "Bhutan",
+  "Bolivia",
+  "Bonaire, Sint Eustatius and Saba",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Bouvet Island",
+  "Brazil",
+  "British Indian Ocean Territory",
+  "British Virgin Islands",
+  "Brunei Darussalam",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Cape Verde",
+  "Cayman Islands",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Christmas Island",
+  "Cocos (Keeling) Islands",
+  "Colombia",
+  "Comoros",
+  "Congo",
+  "Congo, the Democratic Republic of the",
+  "Cook Islands",
+  "Costa Rica",
+  "Croatia",
+  "Curacao",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Ethiopia",
+  "Falkland Islands",
+  "Faroe Islands",
+  "Fiji",
+  "Finland",
+  "France",
+  "French Guiana",
+  "French Polynesia",
+  "French Southern and Antarctic Lands",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Gibraltar",
+  "Greece",
+  "Greenland",
+  "Grenada",
+  "Guadeloupe",
+  "Guam",
+  "Guatemala",
+  "Guernsey",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Heard Island and McDonald Islands",
+  "Holy See",
+  "Honduras",
+  "Hong Kong",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Ireland",
+  "Isle of Man",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jersey",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Macao",
+  "Macedonia",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Martinique",
+  "Mauritania",
+  "Mauritius",
+  "Mayotte",
+  "Mexico",
+  "Micronesia, Federated States of",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Montserrat",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "Netherlands Antilles",
+  "New Caledonia",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "Niue",
+  "Norfolk Island",
+  "Northern Mariana Islands",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestinian Territories",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Pitcairn",
+  "Poland",
+  "Portugal",
+  "Puerto Rico",
+  "Qatar",
+  "Reunion",
+  "Romania",
+  "Rwanda",
+  "Saint Barthelemy",
+  "Saint Helena",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Martin (French part)",
+  "Saint Pierre and Miquelon",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Sint Maarten (Dutch part)",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "Spain",
+  "Sri Lanka",
+  "Suriname",
+  "Svalbard and Jan Mayen",
+  "Swaziland",
+  "Sweden",
+  "Switzerlandselected",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste",
+  "Togo",
+  "Tokelau",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Turks and Caicos Islands",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States",
+  "United States Minor Outlying Islands",
+  "United States Virgin Islands",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Venezuela",
+  "Vietnam",
+  "Wallis and Futuna",
+  "Western Sahara",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
 ];
-
-
-const SLACK_APP_TOKEN =
-  process.env.SLACK_APP_TOKEN ||
-  "";
-const SLACK_CHANNEL_ID = "C07NTMV7L84";
-const USERNAME = "upwork_bot";
-
-const web = new WebClient(SLACK_APP_TOKEN);
-
-/**
- * Function for sending notification to the slack channel
- * @param {string} message
- */
-
-async function sendSlackMessage(message) {
-  try {
-    // Post a message to the channel
-    await web.chat.postMessage({
-      channel: SLACK_CHANNEL_ID,
-      text: message,
-      username: USERNAME
-    });
-  } catch (error) {
-    console.log("send message error!");
-  }
-}
+let COUNTRY = "";
 
 const nameArray = {
   Poland: [
-    { firstName: "Adrian", lastName: "Kowalski" },
-    { firstName: "Adam", lastName: "Nowak" },
-    { firstName: "Daniel", lastName: "Wojcik" },
-    { firstName: "Dominik", lastName: "Kaminski" },
-    { firstName: "Emil", lastName: "Zielinski" },
-    { firstName: "Filip", lastName: "Kaczmarek" },
-    { firstName: "Gabriel", lastName: "Piotrowski" },
-    { firstName: "Igor", lastName: "Laskowski" },
-    { firstName: "Jakub", lastName: "Gorski" },
-    { firstName: "Kamil", lastName: "Wrobel" },
-    { firstName: "Karol", lastName: "Pawlak" },
-    { firstName: "Krzysztof", lastName: "Wolski" },
-    { firstName: "Lukasz", lastName: "Sikora" },
-    { firstName: "Maciej", lastName: "Baran" },
-    { firstName: "Mateusz", lastName: "Szewczyk" },
-    { firstName: "Michal", lastName: "Krawczyk" },
-    { firstName: "Nikodem", lastName: "Dudek" },
-    { firstName: "Oskar", lastName: "Zalewski" },
-    { firstName: "Patryk", lastName: "Nowicki" },
-    { firstName: "Pawel", lastName: "Czerwinski" },
-    { firstName: "Rafal", lastName: "Jankowski" },
-    { firstName: "Sebastian", lastName: "Szymczak" },
-    { firstName: "Szymon", lastName: "Ostrowski" },
-    { firstName: "Tomasz", lastName: "Chmielewski" },
-    { firstName: "Wiktor", lastName: "Urbanski" },
-    { firstName: "Wojciech", lastName: "Borkowski" },
-    { firstName: "Zbigniew", lastName: "Sadowski" },
-    { firstName: "Bartosz", lastName: "Mazurek" },
-    { firstName: "Grzegorz", lastName: "Kubiak" },
-    { firstName: "Jacek", lastName: "Brzozowski" },
+    { firstName: 'David', lastName: 'Lyle' },
+    { firstName: 'Benjamin', lastName: 'Thatcher' },
+    { firstName: 'Avery', lastName: 'Irvin' },
+    { firstName: 'Logan', lastName: 'Robertson' },
+    { firstName: 'Leo', lastName: 'Davis' },
+    { firstName: 'Jayce', lastName: 'Bailey' },
+    { firstName: 'Huxley', lastName: 'Boyd' },
+    { firstName: 'William', lastName: 'Ward' },
+    { firstName: 'Aarav', lastName: 'Nelson' },
+    { firstName: 'River', lastName: 'White' }
   ],
   Canada: [
-    { firstName: "David", lastName: "Lyle" },
-    { firstName: "Benjamin", lastName: "Thatcher" },
-    { firstName: "Avery", lastName: "Irvin" },
-    { firstName: "Logan", lastName: "Robertson" },
-    { firstName: "Leo", lastName: "Davis" },
-    { firstName: "Jayce", lastName: "Bailey" },
-    { firstName: "Huxley", lastName: "Boyd" },
-    { firstName: "William", lastName: "Ward" },
-    { firstName: "Aarav", lastName: "Nelson" },
-    { firstName: "River", lastName: "White" },
-  ],
-
-  Netherland: [
-    { firstName: "Lars", lastName: "Jansen" },
-    { firstName: "Finn", lastName: "Bakker" },
-    { firstName: "Daan", lastName: "Visser" },
-    { firstName: "Milan", lastName: "Smit" },
-    { firstName: "Ruben", lastName: "de Boer" },
-    { firstName: "Jesse", lastName: "Kok" },
-    { firstName: "Niels", lastName: "Meijer" },
-    { firstName: "Sven", lastName: "Vries" },
-    { firstName: "Timo", lastName: "Dijk" },
-    { firstName: "Koen", lastName: "Mulder" },
-    { firstName: "Bram", lastName: "Groot" },
-    { firstName: "Thijs", lastName: "Bos" },
-    { firstName: "Sem", lastName: "Vos" },
-    { firstName: "Luuk", lastName: "Peters" },
-    { firstName: "Jasper", lastName: "Hendriks" },
-    { firstName: "Stijn", lastName: "Leeuwen" },
-    { firstName: "Wout", lastName: "Bruin" },
-    { firstName: "Hugo", lastName: "Berg" },
-    { firstName: "Tijn", lastName: "Jong" },
-    { firstName: "Rik", lastName: "Schouten" },
-  ],
+    { firstName: 'David', lastName: 'Lyle' },
+    { firstName: 'Benjamin', lastName: 'Thatcher' },
+    { firstName: 'Avery', lastName: 'Irvin' },
+    { firstName: 'Logan', lastName: 'Robertson' },
+    { firstName: 'Leo', lastName: 'Davis' },
+    { firstName: 'Jayce', lastName: 'Bailey' },
+    { firstName: 'Huxley', lastName: 'Boyd' },
+    { firstName: 'William', lastName: 'Ward' },
+    { firstName: 'Jaxson', lastName: 'Lewis' },
+    { firstName: 'River', lastName: 'White' },
+    { firstName: 'Andrew', lastName: 'Meyer' },
+    { firstName: 'Colton', lastName: 'Park' },
+    { firstName: 'Odin', lastName: 'Ward' },
+    { firstName: 'Seth', lastName: 'Menton' },
+    { firstName: 'Zayden', lastName: 'Carlson' },
+    { firstName: 'Charles', lastName: 'Till' },
+    { firstName: 'Sebastian', lastName: 'Thomas' },
+    { firstName: 'Max', lastName: 'Perrin' },
+    { firstName: 'Rowan', lastName: 'Tyrell' },
+    { firstName: 'Brooks', lastName: 'Roberts' },
+    { firstName: 'Arjun', lastName: 'Glen' },
+    { firstName: 'Damian', lastName: 'Beckman' },
+    { firstName: 'Declan', lastName: 'Baldwin' },
+    { firstName: 'Cayden', lastName: 'Rose' },
+    { firstName: 'Ivan', lastName: 'Mayer' },
+    { firstName: 'Jasper', lastName: 'Meyer' },
+    { firstName: 'Adam', lastName: 'Fisher' },
+    { firstName: 'Dominic', lastName: 'Grant' },
+    { firstName: 'Ryan', lastName: 'Todd' },
+    { firstName: 'Rory', lastName: 'Tillsley' },
+    { firstName: 'Vincent', lastName: 'Johnson' },
+    { firstName: 'Zachary', lastName: 'Stewart' },
+    { firstName: 'Jayce', lastName: 'Frazer' },
+    { firstName: 'Callum', lastName: 'Day' },
+    { firstName: 'Cole', lastName: 'Cowan' },
+    { firstName: 'Isaac', lastName: 'Brant' },
+    { firstName: 'Aaron', lastName: 'Young' },
+    { firstName: 'Austin', lastName: 'Bourne' },
+    { firstName: 'Brooks', lastName: 'Paull' },
+    { firstName: 'Dominic', lastName: 'Scott' },
+    { firstName: 'Damian', lastName: 'Harris' },
+    { firstName: 'Harvey', lastName: 'Perrin' },
+    { firstName: 'Tobias', lastName: 'Brockhouse' },
+    { firstName: 'Andre', lastName: 'Nelson' },
+    { firstName: 'Walter', lastName: 'Withers' },
+    { firstName: 'Odin', lastName: 'Ross' },
+    { firstName: 'Carson', lastName: 'Wilkinson' },
+    { firstName: 'Carter', lastName: 'Carlson' },
+    { firstName: 'Ashton', lastName: 'Mercer' },
+    { firstName: 'Mark', lastName: 'Lee' },
+    { firstName: 'Mason', lastName: 'Granholm' },
+    { firstName: 'Arjun', lastName: 'Symons' },
+    { firstName: 'Gunner', lastName: 'Miller' },
+    { firstName: 'Kaiden', lastName: 'Lee' },
+    { firstName: 'Logan', lastName: 'Davidson' },
+    { firstName: 'Malik', lastName: 'Altman' },
+    { firstName: 'Kevin', lastName: 'Nevin' },
+    { firstName: 'Kingston', lastName: 'Bourne' },
+    { firstName: 'Griffin', lastName: 'Marks' },
+    { firstName: 'Thomas', lastName: 'Bishop' },
+    { firstName: 'Lewis', lastName: 'Beckman' },
+    { firstName: 'Cameron', lastName: 'Prince' },
+    { firstName: 'Leonardo', lastName: 'Irving' },
+    { firstName: 'Maximus', lastName: 'Clifton' },
+    { firstName: 'Jayce', lastName: 'Brock' },
+    { firstName: 'Aidan', lastName: 'Staples' },
+    { firstName: 'Ashton', lastName: 'Thomson' },
+    { firstName: 'Arthur', lastName: 'Hennessy' },
+    { firstName: 'Jordan', lastName: 'Brook' },
+    { firstName: 'Cohen', lastName: 'Mitchell' },
+    { firstName: 'Jaxon', lastName: 'Barry' },
+    { firstName: 'Colton', lastName: 'Till' },
+    { firstName: 'Kyle', lastName: 'Foster' }
+  ]
 };
 
-const COUNTRY = "Netherland";
+const nameCountry = "Canada";
 
+const PASSWORD = "kimju1992103";
+
+const getCurrentDateTime = () => {
+  const now = new Date();
+  // Define options for EST/EDT
+  const options = {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  };
+  const formatter = new Intl.DateTimeFormat("en-US", options);
+  const [
+    { value: month },
+    ,
+    { value: day },
+    ,
+    { value: year },
+    ,
+    { value: hour },
+    ,
+    { value: minute },
+    ,
+    { value: second },
+  ] = formatter.formatToParts(now);
+  const formattedDateTime = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  return formattedDateTime;
+};
 const formatDateTime = () => {
   const date = new Date();
   const year = date.getFullYear();
@@ -146,159 +396,158 @@ function updateStatus(newStatus) {
   process.stdout.cursorTo(0); // Move the cursor to the beginning of the line
   process.stdout.write(newStatus);
 }
-
+const randomNumber = () => Math.floor(Math.random() * 100000);
 const delay = (milliseconds) =>
   new Promise((resolve) => setTimeout(resolve, milliseconds));
-
-const signup = async (page, emailAddress) => {
+const humanLikeType = async (page, input, text) => {
+  for (let i = 0; i < text.length; i++) {
+    // Simulate a typo with a small probability
+    if (Math.random() < 0.2) {
+      // 10% chance of a typo
+      const typoChar = String.fromCharCode(97 + Math.floor(Math.random() * 26)); // Random lowercase letter
+      await page.type(input, typoChar);
+      await delay(Math.random() * 150 + 50);
+      await page.keyboard.press("Backspace"); // Correct the typo
+    }
+    // Type the correct character
+    await page.type(input, text[i]);
+    await delay(Math.random() * 150 + 50);
+  }
+};
+const signup = async (page, emailAddress, firstName, lastName) => {
   try {
     // Close the cookie consent popup if it appears
     try {
       await page.waitForSelector(
-        'div#onetrust-close-btn-container button[aria-label="Close"]',
-        { timeout: 10000 }
+        'div#onetrust-close-btn-container button[aria-label="Close"]'
       );
       await page.$eval(
         'div#onetrust-close-btn-container button[aria-label="Close"]',
         (el) => el.click()
       );
-      updateStatus("Cookie consent popup closed");
+      updateStatus("===> 15% Cookie consent popup closed");
     } catch (error) {
       updateStatus("Cookie consent popup not found, proceeding...");
     }
-
     // Click on 'Work' button
-    updateStatus("SignUp State2...");
-    await page.screenshot({ path: "state2.png" }); // Add screenshot here
-    await page.waitForSelector('[data-qa="work"]', { timeout: 300000 });
+    updateStatus("====> 20% Navigating to Signup page...");
+    await page.waitForSelector('[data-qa="work"]', {
+      timeout: 400000,
+    });
     await page.$eval('[data-qa="work"]', (el) => el.click());
     await page.$eval(`button[type="button"][data-qa="btn-apply"]`, (el) =>
       el.click()
     );
-
-    // Get a random index from the array of names for the specified country
-    const randomIndex = Math.floor(Math.random() * nameArray[COUNTRY].length);
-    // Extract the first name and last name from the selected country
-    const { firstName, lastName } = nameArray[COUNTRY][randomIndex];
-
     // Fill out the signup form
-    updateStatus("SignUp State3...");
-    await page.waitForSelector("#first-name-input", { timeout: 10000 });
-    await page.type("#first-name-input", firstName);
-    await page.type("#last-name-input", lastName);
-    // await page.type('#first-name-input', 'Higgins');
-    // await page.type('#last-name-input', 'Randy');
-    await page.type("#redesigned-input-email", emailAddress);
-    await page.type("#password-input", PASSWORD);
-
+    updateStatus("=====> 25% Filling the inputs out...");
+    await page.waitForSelector("#first-name-input", {
+      timeout: 400000,
+    });
+    await humanLikeType(page, "#first-name-input", firstName);
+    await humanLikeType(page, "#last-name-input", lastName);
+    await humanLikeType(page, "#redesigned-input-email", emailAddress);
+    await humanLikeType(page, "#password-input", PASSWORD);
     // Wait for the country dropdown to appear and select country
-    updateStatus("SignUp State4-country...");
+    updateStatus("======> 30% Selecting country...");
     await page.waitForSelector('[aria-labelledby*="select-a-country"]', {
-      timeout: 10000,
+      timeout: 100000,
     });
     await delay(1500);
-    await page.$eval('[aria-labelledby*="select-a-country"]', (el) =>
-      el.click()
-    );
-    await page.waitForSelector('[autocomplete="country-name"]');
-    await page.type('[autocomplete="country-name"]', COUNTRY);
-    await page.$eval('[aria-labelledby="select-a-country"] li', (el) =>
-      el.click()
-    );
-    // Accept terms and conditions
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+    let transition = country.indexOf("Japan") - country.indexOf(COUNTRY);
+    while (true) {
+      if (transition > 0) {
+        transition--;
+        await page.keyboard.press("ArrowUp");
+      } else {
+        transition++;
+        await page.keyboard.press("ArrowDown");
+      }
+      if (transition == 0) {
+        await page.keyboard.press("Enter");
+        break;
+      }
+    }
     await delay(500);
-    await page.waitForSelector("#checkbox-terms", { timeout: 10000 });
+    await page.waitForSelector("#checkbox-terms", {
+      timeout: 10000,
+    });
     await page.$eval("#checkbox-terms", (el) => el.click());
-    await delay(500);
-    await page.waitForSelector("#button-submit-form", { timeout: 10000 });
+    await page.waitForSelector("#button-submit-form", {
+      timeout: 10000,
+    });
     await page.$eval("#button-submit-form", (el) => el.click());
-    updateStatus("Verify email...");
-    await delay(8000);
+    updateStatus("==============> 70% Verifing email...");
+    await delay(10000);
+    await page.screenshot({
+      path: `1-submit.jpg`,
+    });
   } catch (error) {
     updateStatus(`Error in signup: ${error.message}`);
     throw error;
   }
 };
-
 const checkConnect = async (page, emailAddress) => {
-  try {
-    await retry(() =>
-      page.goto(
-        "https://www.upwork.com/jobs/Website-Designer-and-Developer-Figma-Webflow_~01782f825d88a411b3/?referrer_url_path=%2Fnx%2Fsearch%2Fjobs%2F",
-        {
-          waitUntil: "domcontentloaded",
-        }
-      )
-    );
-    await page.waitForSelector("div[data-v-614febcf].mt-2", { timeout: 60000 });
-    await delay(1500);
-    const availableConnects = await page.evaluate(() =>
-      document.querySelector("div[data-v-614febcf].mt-2").textContent.trim()
-    );
-    console.log("test result========>", availableConnects);
-    const suspended = await page.evaluate(() => {
-      const elements = document.querySelectorAll("div.air3-alert-content");
-      return Array.from(elements)
-        .map((el) => el.textContent)
-        .join(" ");
-    });
-    if (
-      availableConnects === "Available Connects: 10" &&
-      !suspended.includes(
-        "You are unable to complete ID Verification due to a suspension on your account."
-      )
-    ) {
-      const date = formatDateTime();
-      const logEntry = `${date} ${emailAddress}\n`;
-      sendSlackMessage(emailAddress);
-      try {
-        await fs.access(FILENAME);
-      } catch (err) {
-        await fs.writeFile(FILENAME, "");
-      }
-      await fs.appendFile(FILENAME, logEntry);
-      return true;
-    }
+  updateStatus(
+    "==================> 90% Going to job detail page for checking connection..."
+  );
+  await page.goto("https://www.upwork.com/jobs/Flutter-Front-End-Expert-Needed-Updating-Building-new-pages_~01ece3f88186a82017/?referrer_url_path=/nx/search/jobs/", {
+    waitUntil: "domcontentloaded",
+  });
+  updateStatus("===================> 95% Checking connection...");
+  await page.screenshot({
+    path: "3-check.jpg",
+  });
+  await page.waitForSelector("div.text-light-on-muted.mt-5 div.mt-2");
+  await delay(2000);
+  const connect = await page.$eval(
+    "div.text-light-on-muted.mt-5 div.mt-2",
+    (el) => el.innerText.trim()
+  );
+
+  const isSuspend = await checkSuspend(page);
+
+  if (connect === "Available Connects: 0") {
     return false;
-  } catch (error) {
-    updateStatus(`Error in checkConnect: ${error.message}`);
-    throw error;
+  } else {
+    if (isSuspend) {
+      return false;
+    }
+    const date = getCurrentDateTime();
+    const logEntry = `${emailAddress}`;
+    await slackClient.chat.postMessage({
+      channel: channel1,
+      text: logEntry,
+      username: "upwork_bot"
+    });
+    return true;
   }
 };
 
-const readMail = async (page, emailAddress) => {
-  try {
-    await delay(10000);
-
-    await page.goto(`https://generator.email/${emailAddress}`, {
-      waitUntil: "domcontentloaded",
-    });
-    for (let i = 0; i < 5; i++) {
-      const href = await page.evaluate(() => {
-        const aTags = document.querySelectorAll(".button-holder a");
-        return aTags.length > 0 ? aTags[0].href : "";
-      });
-      if (href) return href;
-      else {
-        updateStatus("Email not found. Retrying...");
-        await delay(5000);
+const checkSuspend = async (page) => {
+  const alertElements = await page.$$("div.container div.air3-alert-content");
+  if (alertElements.length > 0) {
+    let isSuspend = false;
+    for (const alert of alertElements) {
+      const textContent = await page.evaluate(
+        (element) => element.textContent,
+        alert
+      );
+      if (textContent.toLowerCase().indexOf("suspens") > -1) {
+        isSuspend = true;
       }
     }
-
-    throw new Error("Inbox is empty after multiple retries");
-  } catch (error) {
-    updateStatus(`Error in readMail: ${error.message}`);
-    throw error;
+    return isSuspend;
+  } else {
+    return true;
   }
 };
-
-const randomNumber = () => Math.floor(Math.random() * 10000000);
 
 let browser;
 const startScript = async () => {
   while (true) {
-    const proxy_index = randomNumber() % proxies.length;
-    const proxy_cur_info = proxies[proxy_index].split(":");
+    COUNTRY = country[Math.floor(Math.random() * country.length)];
     browser = await pt.launch({
       headless: true,
       args: [
@@ -315,63 +564,63 @@ const startScript = async () => {
         "--disable-blink-features=AutomationControlled",
       ],
     });
-
     try {
-      const start = performance.now();
+      const signupStart = performance.now();
       const [page] = await browser.pages();
-
-      // await page.authenticate({
-      //   username: proxy_cur_info[2],
-      //   password: proxy_cur_info[3],
-      // });
-
       const userAgent = new UserAgent();
       await page.setUserAgent(userAgent.toString());
-      await page.setViewport({ width: 1366, height: 768 });
+      await page.setViewport({
+        width: 1920,
+        height: 1080,
+      });
       await page.setExtraHTTPHeaders({
         "Accept-Language": "en-US,en;q=0.9",
       });
-
       await page.evaluateOnNewDocument(() => {
         Object.defineProperty(navigator, "webdriver", {
           get: () => false,
         });
       });
-      const emailAddress = `${faker.person.firstName(
-        "male"
-      )}${faker.person.lastName()}${randomNumber()}@enunal.com`;
-      updateStatus(`${formatDateTime()} ${emailAddress}`);
-      updateStatus("Preparing upwork signup page...");
+
+      const randomIndex = Math.floor(Math.random() * nameArray[nameCountry].length);
+
+      const { firstName, lastName } = nameArray[nameCountry][randomIndex];
+
+      const emailAddress =
+      faker.person.firstName("male").toLowerCase() + faker.person.lastName("male").toLowerCase() + randomNumber() + "@outlook.com";
+      updateStatus(`${formatDateTime()} ${emailAddress}\n`);
+      updateStatus("=> 5% Going to Upwork site...");
       await retry(() =>
         page.goto("https://www.upwork.com/nx/signup/?dest=home", {
           waitUntil: "domcontentloaded",
         })
       );
-      await signup(page, emailAddress);
+      await signup(page, emailAddress, firstName, lastName);
       await delay(2000);
-      // const verify_link = await readMail(page, emailAddress);
-      // await retry(() =>
-      //   page.goto(verify_link, { waitUntil: "domcontentloaded" })
-      // );
 
-      // await delay(5000);
+      await delay(5000);
       const hasConnect = await checkConnect(page, emailAddress);
-
+      // process.stdout.clearLine(); // Clear the current line
       updateStatus(
         `${formatDateTime()} ${emailAddress} => ${
-          (performance.now() - start) / 1000
-        }s : ${
-          hasConnect ? chalk.bgGreen(hasConnect) : chalk.bgRed(hasConnect)
-        }`
+          (performance.now() - signupStart) / 1000
+        }s :  ${getCurrentDateTime()} : ${
+          // hasConnect ? chalk.bgGreen(hasConnect) : chalk.bgRed(hasConnect)
+          hasConnect
+        }\n`
       );
-      console.log("");
-      const delay_time = 5000 + Math.random() * 5000;
+
+      const delay_time = Math.random() * 15000;
       updateStatus(
         `Waiting for next creating account: ${delay_time / 1000}s\n`
       );
       await delay(delay_time);
     } catch (error) {
-      updateStatus(`Error occurred: ${error.message}\n`);
+      if (error.message.includes("Target closed")) {
+        console.error("Target closed unexpectedly. Retrying...");
+      } else {
+        console.error(`Error occurred: ${error.message}`);
+      }
     } finally {
       if (browser) {
         await browser.close();
@@ -379,7 +628,6 @@ const startScript = async () => {
     }
   }
 };
-
 const retry = async (fn, retries = 3) => {
   for (let i = 0; i < retries; i++) {
     try {
@@ -391,17 +639,14 @@ const retry = async (fn, retries = 3) => {
     }
   }
 };
-
 // Handle termination signals to close the browser
 const handleExit = async (signal) => {
-  updateStatus(`Received ${signal}. Closing browser...`);
+  console.error(`Received ${signal}. Closing browser...`);
   if (browser) {
     await browser.close();
   }
   process.exit(0);
 };
-
 process.on("SIGINT", handleExit);
 process.on("SIGTERM", handleExit);
-
 startScript();
