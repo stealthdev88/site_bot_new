@@ -201,7 +201,7 @@ const signup = async (page, emailAddress) => {
     updateStatus("SignUp State3...");
     await page.waitForSelector("#first-name-input", { timeout: 10000 });
     await page.type("#first-name-input", nameArray[COUNTRY][randomNameNumber()]['firstName']);
-    await page.type("#last-name-input", nameArray[COUNTRY][randomNameNumber()]['lastName']));
+    await page.type("#last-name-input", nameArray[COUNTRY][randomNameNumber()]['lastName']);
     await page.type("#redesigned-input-email", emailAddress);
     await page.type("#password-input", PASSWORD);
 
