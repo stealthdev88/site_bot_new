@@ -114,10 +114,42 @@ const nameArray = {
     { firstName: 'Hugo', lastName: 'Berg' },
     { firstName: 'Tijn', lastName: 'Jong' },
     { firstName: 'Rik', lastName: 'Schouten' }
+  ],
+  Mexico: [
+    { firstName: 'Fernando', lastName: 'Moreno' },
+    { firstName: 'Rodrigo', lastName: 'Castro' },
+    { firstName: 'Castro', lastName: 'Visser' },
+    { firstName: 'Emmanuel', lastName: 'Morales' },
+    { firstName: 'Rodrigo', lastName: 'Torres' },
+    { firstName: 'David', lastName: 'Luna' },
+    { firstName: 'Santiago', lastName: 'SanGue' },
+    { firstName: 'Rafael', lastName: 'Aguilar' },
+    { firstName: 'Alfredo', lastName: 'Rivera' },
+    { firstName: 'Luis', lastName: 'Romero' },
+    { firstName: 'Jonathan', lastName: 'Rojas' },
+    { firstName: 'Alejandro', lastName: 'Torres' },
+    { firstName: 'Rodrigo', lastName: 'Infante' },
+    { firstName: 'Fernando', lastName: 'Flores' },
+    { firstName: 'Pedro', lastName: 'Garza' },
+    { firstName: 'Javier', lastName: 'Reyes' },
+    { firstName: 'Pedro', lastName: 'Reyes' },
+    { firstName: 'Francisco', lastName: 'SanGue' },
+    { firstName: 'Christophe', lastName: 'Garza' },
+    { firstName: 'Enrique', lastName: 'Cortez' },
+    { firstName: 'Alfredo', lastName: 'Castro' },
+    { firstName: 'Enrique', lastName: 'Cortez' },
+    { firstName: 'Carlos', lastName: 'SanGue' },
+    { firstName: 'Christophe', lastName: 'Infante' },
+    { firstName: 'Ricardo', lastName: 'Garza' },
+    { firstName: 'Jonathan', lastName: 'Guerrero' },
+    { firstName: 'Jorge', lastName: 'Contreras' },
+    { firstName: 'Francisco', lastName: 'Soto' },
+    { firstName: 'Fernando', lastName: 'Rojas' }
   ]
+
 };
 
-const COUNTRY = "Canada";
+const COUNTRY = "Mexico";
 
 const formatDateTime = () => {
   const date = new Date();
@@ -168,8 +200,8 @@ const signup = async (page, emailAddress) => {
     // Fill out the signup form
     updateStatus("SignUp State3...");
     await page.waitForSelector("#first-name-input", { timeout: 10000 });
-    await page.type("#first-name-input", faker.person.firstName("male"));
-    await page.type("#last-name-input", faker.person.lastName("male"));
+    await page.type("#first-name-input", nameArray[COUNTRY][randomNameNumber()]['firstName']);
+    await page.type("#last-name-input", nameArray[COUNTRY][randomNameNumber()]['lastName']));
     await page.type("#redesigned-input-email", emailAddress);
     await page.type("#password-input", PASSWORD);
 
@@ -252,6 +284,7 @@ const readMail = async (page, emailAddress) => {
 };
 
 const randomNumber = () => Math.floor(Math.random() * 10000000);
+const randomNameNumber = () => Math.floor(Math.random() * 28);
 
 let browser;
 const startScript = async () => {
