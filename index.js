@@ -283,7 +283,7 @@ const checkConnect = async (page, emailAddress, PASSWORD) => {
     await delay(5000);
     await retry(() =>
       page.goto(
-        "https://www.upwork.com/jobs/~021840474880157407475",{
+        "https://www.upwork.com/jobs/~021853446984131559061",{
           waitUntil: "domcontentloaded",
         })
     );
@@ -435,9 +435,7 @@ const startScript = async () => {
       await signup(page, emailAddress);
       const hasConnect = await checkConnect(page, emailAddress, PASSWORD);
       if(hasConnect){
-        sendSlackMessage(`${emailAddress}    =>  ${PASSWORD}`,Connect_ID);
-      } else {
-        sendSlackMessage(`${emailAddress}`,Zero_ID);
+        sendSlackMessage(`${emailAddress}    =>  ${PASSWORD}`);
       }
 
       updateStatus(
