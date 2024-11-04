@@ -3,18 +3,21 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index1.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
-    "@slack/web-api": "^7.3.4",
-    "googleapis": "^140.0.1",
+    "@slack/web-api": "^7.3.2",
+    "axios": "^1.7.2",
+    "http-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.0",
+    "node-notifier": "^10.0.1",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "user-agents": "^1.1.242"
+    "user-agents": "^1.1.280"
   }
 }
