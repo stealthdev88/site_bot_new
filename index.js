@@ -25,6 +25,7 @@ const PASSWORD = "kimju1992103";
 
 const SLACK_APP_TOKEN = process.env.SLACK_APP_TOKEN || "";
 const Connect_ID = "C07U0BMS1FW";
+const USERNAME = "upwork_bot";
 
 const web = new WebClient(SLACK_APP_TOKEN);
 
