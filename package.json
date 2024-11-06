@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "start_proxi": "node index_proxi.js"
   },
   "keywords": [],
   "author": "",
